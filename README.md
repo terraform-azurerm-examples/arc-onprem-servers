@@ -31,7 +31,7 @@ The servers can then be onboarded to Azure by downloading azcmagent and connecti
 
 Consider these servers to be on prem servers for Azure Arc onboarding practice. Do not treat as normal Azure VMs!
 
-## Deployment
+## Prepare
 
 1. Login
 
@@ -67,36 +67,63 @@ Consider these servers to be on prem servers for Azure Arc onboarding practice. 
 
     Additional variables are defined in variables.tf with sensible defaults.
 
-1. Deploy
+## Deploy
 
-    Run through the standard Terraform workflow.
+Run through the standard Terraform workflow.
+
+1. Initialise
+
+    Initialise Terraform to check syntax and then download the providers and modules.
 
     ```bash
     terraform init
-    terraform validate
+    ```
+
+1. Plan
+
+    Evaluate the variables, config files and current state and display the planned additions, deletions and changes.
+
+    ```bash
     terraform plan
+    ```
+
+1. Apply
+
+    Deploy the environment.
+
+    ```bash
     terraform apply
     ```
 
-    If there are any errors then rerun the `terraform apply` and Terraform should create remaining resources.
+## Confirmation
 
-    Once everything has been created then `terraform plan` should display
+Once everything has been created then `terraform plan` should display
 
-    ```text
-    No changes. Infrastructure is up-to-date.
-    ```
+```text
+No changes. Infrastructure is up-to-date.
+```
+
+> If not then rerun the `terraform apply` and Terraform should create remaining resources.
 
 ## Output
 
-Use `terraform output` to show FQDNs and SSH commands.
+The terraform apply will show the outputs, such as FQDNs and SSH commands. To redisplay:
 
-> This will only show output if you are in the Terraform directory.
+```bash
+terraform output
+```
 
-The Windows admin password is a "sensitive value". Use `terraform output windows_admin_password` to display the value.
+The Windows admin password is a "sensitive value". To display its value:
 
-## Removal
+```bash
+terraform output windows_admin_password
+```
 
-To remove the resources:
+> These commands will only show output if you are in the directory of the Terraform repo.
+
+## Destroy
+
+When you no longer need the resources then you can either remove the whole resource group or run:
 
 ```bash
 terraform destroy
