@@ -108,16 +108,16 @@ terraform plan
 If everything has been created then `terraform plan` will display that there are no planned changes.
 
 ```text
-No changes. Infrastructure is up-to-date.
+No changes. Your infrastructure matches the configuration.
 ```
 
-If the output shows that there planned changes then rerun an apply.
+If the output shows that there are planned changes then run another apply.
 
 ```bash
 terraform apply
 ```
 
-Terraform should apply the remaining changes.
+Terraform should apply the remaining changes to reach the desired state.
 
 ## Output
 
