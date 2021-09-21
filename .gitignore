@@ -1,4 +1,6 @@
-trash
 .terraform/*
-terraform.tfvars
+trash/*
 terraform.tfstate*
+.terraform.lock.hcl
+terraform.tfvars
+.azure

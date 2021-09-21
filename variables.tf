@@ -13,10 +13,6 @@ variable "linux_count" {
   default = 0
 }
 
-variable "linux_size" {
-  type    = string
-  default = "Standard_A1_v2"
-}
 
 variable "windows_vm_names" {
   type    = list(string)
@@ -33,14 +29,23 @@ variable "windows_count" {
   default = 0
 }
 
-variable "windows_size" {
-  type    = string
-  default = "Standard_D2s_v3"
+
+//========================================
+
+# These booleans work in combination.
+# The bastion boolean always determines whether the subnet, pip and bastion host are created.
+# If pip is ever false then none of the VMs will get public IPs.
+# If pip is true and bastion is true (default) then only the first windows VM will get a public ip (for Windows Admin Center)
+# If pip is true and bastion is false then all VMs will get public IPs
+
+variable "pip" {
+  type    = bool
+  default = true
 }
 
-variable "create_ansible_hosts" {
+variable "bastion" {
   type    = bool
-  default = false
+  default = true
 }
 
 //========================================
@@ -71,7 +76,7 @@ variable "arc" {
 
 variable "resource_group_name" {
   description = "Azure resource group name"
-  default     = "arc-onprem-servers"
+  default     = "onprem_servers"
 }
 
 variable "resource_prefix" {
@@ -92,9 +97,19 @@ variable "tags" {
 
 variable "admin_username" {
   type    = string
-  default = "arcadmin"
+  default = "onpremadmin"
 }
 
 variable "admin_ssh_key_file" {
   default = "~/.ssh/id_rsa.pub"
+}
+
+variable "linux_size" {
+  type    = string
+  default = "Standard_A1_v2"
+}
+
+variable "windows_size" {
+  type    = string
+  default = "Standard_D2s_v3"
 }
