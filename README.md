@@ -95,15 +95,29 @@ Run through the standard Terraform workflow.
     terraform apply
     ```
 
+    A successful deployment will display `Apply complete!` and display the outputs.
+
 ## Confirmation
 
-Once everything has been created then `terraform plan` should display
+There is a possibility that your session will timeout if you are using the Cloud Shell. If so then run another plan.
+
+```bash
+terraform plan
+```
+
+If everything has been created then `terraform plan` will display that there are no planned changes.
 
 ```text
 No changes. Infrastructure is up-to-date.
 ```
 
-> If not then rerun the `terraform apply` and Terraform should create remaining resources.
+If the output shows that there planned changes then rerun an apply.
+
+```bash
+terraform apply
+```
+
+Terraform should apply the remaining changes.
 
 ## Output
 
