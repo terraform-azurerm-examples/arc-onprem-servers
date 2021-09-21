@@ -94,7 +94,7 @@ resource "azurerm_network_security_rule" "ssh" {
   direction                                  = "Inbound"
   access                                     = "Allow"
   protocol                                   = "Tcp"
-  source_address_prefix                      = "VirtualNetwork"
+  source_address_prefix                      = var.pip && !var.bastion ? "*" : "VirtualNetwork"
   source_port_range                          = "*"
   destination_application_security_group_ids = [azurerm_application_security_group.linux.id]
   destination_port_range                     = "22"
@@ -109,7 +109,7 @@ resource "azurerm_network_security_rule" "rdp" {
   direction                                  = "Inbound"
   access                                     = "Allow"
   protocol                                   = "Tcp"
-  source_address_prefix                      = "VirtualNetwork"
+  source_address_prefix                      = var.pip && !var.bastion ? "*" : "VirtualNetwork"
   source_port_range                          = "*"
   destination_application_security_group_ids = [azurerm_application_security_group.windows.id]
   destination_port_range                     = "3389"
