@@ -1,7 +1,5 @@
 .terraform/*
-trash/*
-terraform.tfstate*
 .terraform.lock.hcl
 .terraform.tfstate.lock.info
-terraform.tfvars
-.azure
+azcmagent.auto.tfvars
+terraform.tfstate*
