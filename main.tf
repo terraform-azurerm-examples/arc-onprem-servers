@@ -252,7 +252,7 @@ module "linux_vms" {
 
 module "windows_vms" {
   // source              = "../terraform-azurerm-arc-onprem-windows-vm"
-  source              = "github.com/terraform-azurerm-modules/terraform-azurerm-arc-onprem-windows-vm?ref=v1.1"
+  source              = "github.com/terraform-azurerm-modules/terraform-azurerm-arc-onprem-windows-vm?ref=v1.2"
   resource_group_name = azurerm_resource_group.onprem.name
   location            = azurerm_resource_group.onprem.location
   tags                = var.tags
