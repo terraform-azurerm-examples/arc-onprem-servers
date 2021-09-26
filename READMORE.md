@@ -62,7 +62,7 @@ arc = {
     service_principal_secret = "password"
 
     subscription_id     = "subscriptionId"
-    resource_group_name = "arc_poc"
+    resource_group_name = "arc_pilot"
     location            = "uksouth"
 
     tags = {
@@ -80,7 +80,7 @@ The tenant, appId and password are the values from `az ad sp create-for-rbac`.
 Example command to configure a service principal that has the onboarding role on a resource group:
 
 ```bash
-rgid=$(az group create --name arc_poc --location uksouth --query id --output tsv)
+rgid=$(az group create --name arc_pilot --location uksouth --query id --output tsv)
 az ad sp create-for-rbac --role "Azure Connected Machine Onboarding" --scopes $rgid --output jsonc
 ```
 
