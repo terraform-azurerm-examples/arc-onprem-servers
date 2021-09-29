@@ -40,7 +40,16 @@ jq -r <<< $json
 # Create the auto.*.tfvars file
 
 cat > azcmagent.auto.tfvars <<EOF
-azcmagent = true
+azcmagent = {
+  windows = {
+    install = true
+    connect = true
+  }
+  linux = {
+    install = true
+    connect = true
+  }
+}
 
 arc = {
   tenant_id                = "$(jq -r .tenant <<< $json)"

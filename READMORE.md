@@ -37,9 +37,22 @@ You can SSH to the VM and install the [azcmagent](https://docs.microsoft.com/azu
 
 ### Automated azcmagent installation
 
-If you want this Terraform repo to automatically download and install the azcmagent then set:
+If you to control whether this Terraform repo automatically download and install the azcmagent and then connects to Azure Arc then set:
 
-* `azcmagent = true`
+```hcl
+azcmagent = {
+  windows = {
+    install = true
+    connect = true
+  }
+  linux = {
+    install = true
+    connect = true
+  }
+}
+```
+
+Having connect = true for either OS type requires a defined arc object.
 
 ## Connecting to Azure Arc
 

@@ -33,11 +33,31 @@ locals {
 
   windows_admin_password = format("%s!", title(random_pet.onprem.id))
 
+  azcmagent = var.azcmagent != null ? var.azcmagent : var.arc != null ? {
+    windows = {
+      install = true
+      connect = true
+    }
+    linux = {
+      install = true
+      connect = true
+    }
+    } : {
+    windows = {
+      install = false
+      connect = false
+    }
+    linux = {
+      install = false
+      connect = false
+    }
+  }
+
   # Set a boolean for the connect if the arc object has been set
-  azcmagent_connect = var.arc == null ? false : true
+  # azcmagent_connect = var.arc == null ? false : true
 
   // And then force azcmagent_download to true
-  azcmagent_download = local.azcmagent_connect ? true : var.azcmagent
+  # azcmagent_download = local.azcmagent_connect ? true : var.azcmagent
 }
 
 // Resource groups
@@ -246,8 +266,8 @@ module "linux_vms" {
   admin_username       = var.admin_username
   admin_ssh_public_key = azurerm_ssh_public_key.onprem.public_key
 
-  azcmagent = local.azcmagent_download
-  arc       = var.arc
+  azcmagent = local.azcmagent.linux.install
+  arc       = local.azcmagent.linux.connect ? var.arc : null
 }
 
 module "windows_vms" {
@@ -268,6 +288,6 @@ module "windows_vms" {
   admin_username = var.admin_username
   admin_password = local.windows_admin_password
 
-  azcmagent = local.azcmagent_download
-  arc       = var.arc
+  azcmagent = local.azcmagent.windows.install
+  arc       = local.azcmagent.windows.connect ? var.arc : null
 }

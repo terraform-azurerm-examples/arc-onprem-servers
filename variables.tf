@@ -51,13 +51,23 @@ variable "bastion" {
 //========================================
 
 variable "azcmagent" {
-  description = "Set to true to download and install the azcmagent."
-  type        = bool
-  default     = false
+  description = "Set to control download and install the azcmagent, and connect."
+  type = object({
+    windows = object({
+      install = bool
+      connect = bool
+    })
+    linux = object({
+      install = bool
+      connect = bool
+    })
+  })
+
+  default = null
 }
 
 variable "arc" {
-  description = "Object desribing the service principal and resource group for the Azure Arc connected machines. Requires azcmagent = true."
+  description = "Object describing the service principal and resource group for the Azure Arc connected machines. If azcmagent is unset then this will set all to true."
   type = object({
     tenant_id                = string
     subscription_id          = string
