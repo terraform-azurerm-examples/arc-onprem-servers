@@ -57,13 +57,31 @@ Consider these servers to be on prem servers for Azure Arc onboarding practice. 
 
 1. Edit terraform.tfvars (optional)
 
-    Modify the terraform.tfvars as required. The default values will create three VMs of each type.
+    Modify the terraform.tfvars as required. The default values will create three Ubuntu VMs and two Windows VMs.
 
-    The default settings for pip and bastion will create an Azure Bastion service to securely connect to the VMs over SSH and RDP. It will add a single public IP to the first Windows VM for Windows Admin Center access over the FQDN.
+    The default settings for the pip and bastion boolean variables will create public IPs resource on all VMs.
 
-    * If you are not planning to use Windows Admin Center then set pip to false.
-    * If you would rather use public IPs on all hosts rather than Bastion (cheaper, less secure) then set bastion = false and pip = true
-    * For fully secure access then you have the option to add hybrid networking connectivity (e.g. P2S to a VPN Gateway) and setting both to false.
+    > Customise if you prefer to use Bastion or you plan to add private networking access via VPN / ExpressRoute. Note that setting both to true will only create a public IP for the first Windows server - for Windows Admin Center access.
+
+    The module will automatically add your source IP address to the NSGs for RDP / SSH access to the public IPs.
+
+    Set it manually if you require more than one source IP address or if you are running on remote compute e.g. a Cloud Shell container.
+
+    1. Find your source IP address
+
+        Go to https://ipinfo.io, or
+
+        ```bash
+        curl https://ipinfo.io/ip
+        ```
+
+    1. Add to source_address_prefixes
+
+        For example:
+
+        ```text
+        source_address_prefixes = ["68.321.97.64","86.158.18.94"]
+        ```
 
     Additional variables are defined in variables.tf with sensible defaults.
 

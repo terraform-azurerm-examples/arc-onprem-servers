@@ -15,7 +15,7 @@ output "windows_fqdns" {
 }
 
 output "admin_username" {
-  value     = var.admin_username
+  value = var.admin_username
 }
 
 output "windows_admin_password" {
@@ -25,4 +25,15 @@ output "windows_admin_password" {
 
 output "uniq" {
   value = local.uniq
+}
+
+output "linux_ssh_pair" {
+  value = {
+    public  = var.admin_ssh_key_file
+    private = trimsuffix(var.admin_ssh_key_file, ".pub")
+  }
+}
+
+output "source_address_prefixes" {
+  value = local.source_address_prefixes
 }

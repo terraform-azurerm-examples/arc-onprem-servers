@@ -1,32 +1,43 @@
 variable "linux_vm_names" {
-  type    = list(string)
-  default = []
+  description = "List of linux VM names. Overrides the linux_prefix and linux_count variables."
+  type        = list(string)
+  default     = []
 }
 
 variable "linux_prefix" {
-  type    = string
-  default = "ubuntu"
+  description = "Use in combination with linux_count to generate a list of VM names."
+  type        = string
+  default     = "ubuntu"
 }
 
 variable "linux_count" {
-  type    = number
-  default = 0
+  description = "Use in combination with linux_prefix to generate a list of VM names."
+  type        = number
+  default     = 0
 }
 
-
 variable "windows_vm_names" {
-  type    = list(string)
-  default = []
+  description = "List of windows VM names. Overrides the windows_prefix and windows_count variables."
+  type        = list(string)
+  default     = []
 }
 
 variable "windows_prefix" {
-  type    = string
-  default = "win"
+  description = "Use in combination with windows_count to generate a list of VM names."
+  type        = string
+  default     = "win"
 }
 
 variable "windows_count" {
-  type    = number
-  default = 0
+  description = "Use in combination with windows_prefix to generate a list of VM names."
+  type        = number
+  default     = 0
+}
+
+variable "source_address_prefixes" {
+  description = "Specify list of source ip addresses permitted for RDP and SSH access."
+  type        = list(string)
+  default     = []
 }
 
 

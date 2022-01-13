@@ -14,9 +14,14 @@ provider "azurerm" {
 provider "azuread" {}
 provider "random" {}
 provider "template" {}
+provider "http" {}
 
 data "azurerm_subscription" "current" {}
 data "azurerm_client_config" "current" {}
+
+data "http" "source_address" {
+  url = "https://ipinfo.io/ip"
+}
 
 locals {
   name = try(length(var.resource_prefix), 0) > 0 ? "${var.resource_prefix}-onprem_servers" : "onprem_servers"
@@ -52,6 +57,9 @@ locals {
       connect = false
     }
   }
+
+  # Use source_address_prefices if set, if not just use current public IP
+  source_address_prefixes = coalescelist(var.source_address_prefixes, [data.http.source_address.body])
 
   # Set a boolean for the connect if the arc object has been set
   # azcmagent_connect = var.arc == null ? false : true
@@ -114,7 +122,7 @@ resource "azurerm_network_security_rule" "ssh" {
   direction                                  = "Inbound"
   access                                     = "Allow"
   protocol                                   = "Tcp"
-  source_address_prefix                      = var.pip && !var.bastion ? "*" : "VirtualNetwork"
+  source_address_prefixes                    = local.source_address_prefixes
   source_port_range                          = "*"
   destination_application_security_group_ids = [azurerm_application_security_group.linux.id]
   destination_port_range                     = "22"
@@ -129,7 +137,7 @@ resource "azurerm_network_security_rule" "rdp" {
   direction                                  = "Inbound"
   access                                     = "Allow"
   protocol                                   = "Tcp"
-  source_address_prefix                      = var.pip && !var.bastion ? "*" : "VirtualNetwork"
+  source_address_prefixes                    = local.source_address_prefixes
   source_port_range                          = "*"
   destination_application_security_group_ids = [azurerm_application_security_group.windows.id]
   destination_port_range                     = "3389"
@@ -144,7 +152,7 @@ resource "azurerm_network_security_rule" "winrm" {
   direction                                  = "Inbound"
   access                                     = "Allow"
   protocol                                   = "Tcp"
-  source_address_prefix                      = "*"
+  source_address_prefixes                    = local.source_address_prefixes
   source_port_range                          = "*"
   destination_application_security_group_ids = [azurerm_application_security_group.windows.id]
   destination_port_ranges                    = ["5985", "5986"]
@@ -159,7 +167,7 @@ resource "azurerm_network_security_rule" "wac" {
   direction                                  = "Inbound"
   access                                     = "Allow"
   protocol                                   = "Tcp"
-  source_address_prefix                      = "*"
+  source_address_prefixes                    = local.source_address_prefixes
   source_port_range                          = "*"
   destination_application_security_group_ids = [azurerm_application_security_group.windows.id]
   destination_port_ranges                    = ["6516"]
