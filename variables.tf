@@ -100,15 +100,19 @@ variable "resource_group_name" {
   default     = "onprem_servers"
 }
 
-variable "resource_prefix" {
-  description = "Optional prefix string to apply to Azure resource names, e.g. DO-NOT-TOUCH"
-  type        = string
-  default     = null
-}
-
 variable "location" {
   description = "Azure region."
   default     = "UK South"
+}
+
+variable "linux_location" {
+  description = "Azure region. Use to get around Azure Pass regional VM CPU quotas"
+  default     = null
+}
+
+variable "windows_location" {
+  description = "Azure region. Use to get around Azure Pass regional VM CPU quotas"
+  default     = null
 }
 
 variable "tags" {
@@ -128,6 +132,11 @@ variable "admin_ssh_key_file" {
 variable "linux_size" {
   type    = string
   default = "Standard_A1_v2"
+}
+
+variable "windows_admin_password" {
+  type    = string
+  default = null
 }
 
 variable "windows_size" {

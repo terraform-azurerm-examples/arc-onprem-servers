@@ -1,10 +1,14 @@
 resource_group_name = "onprem_servers"
 
-linux_count  = 3
-linux_prefix = "ubuntu"
+linux_count    = 3
+linux_prefix   = "ubuntu"
+linux_location = "northeurope"
+linux_size     = "Standard_D2as_v5"
 
-windows_count  = 2
-windows_prefix = "win"
+windows_count    = 2
+windows_prefix   = "win"
+windows_location = "westeurope"
+windows_size     = "Standard_D2as_v5"
 
 # Specify multiple source IP addresses to open up RDP and SSH access
 # Defaults to the result of `curl https://ipinfo.io/ip`
