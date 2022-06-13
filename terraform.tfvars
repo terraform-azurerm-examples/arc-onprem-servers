@@ -3,12 +3,16 @@ resource_group_name = "onprem_servers"
 linux_count    = 3
 linux_prefix   = "ubuntu"
 linux_location = "northeurope"
-linux_size     = "Standard_D2as_v5"
+linux_size     = "Standard_A1_v2"
 
-windows_count    = 2
+admin_ssh_key_file = "~/.ssh/id_rsa.pub"
+
+windows_count    = 3
 windows_prefix   = "win"
 windows_location = "westeurope"
-windows_size     = "Standard_D2as_v5"
+windows_size     = "Standard_D2s_v3"
+
+windows_admin_password = "Citadel!"
 
 # Specify multiple source IP addresses to open up RDP and SSH access
 # Defaults to the result of `curl https://ipinfo.io/ip`
