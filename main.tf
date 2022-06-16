@@ -9,6 +9,9 @@ terraform {
 
 provider "azurerm" {
   features {}
+
+  tenant_id       = var.tenant_id
+  subscription_id = var.subscription_id
 }
 
 provider "azuread" {}
@@ -16,8 +19,8 @@ provider "random" {}
 provider "template" {}
 provider "http" {}
 
-data "azurerm_subscription" "current" {}
-data "azurerm_client_config" "current" {}
+# data "azurerm_subscription" "current" {}
+# data "azurerm_client_config" "current" {}
 
 data "http" "source_address" {
   url = "https://ipinfo.io/ip"

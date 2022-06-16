@@ -143,3 +143,13 @@ variable "windows_size" {
   type    = string
   default = "Standard_D2s_v3"
 }
+
+variable "tenant_id" {
+  type    = string
+  default = null
+}
+
+variable "subscription_id" {
+  type    = string
+  default = null
+}

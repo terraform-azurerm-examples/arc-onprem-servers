@@ -1,9 +1,11 @@
+tenant_id           = null
+subscription_id     = null
 resource_group_name = "onprem_servers"
 
 linux_count    = 3
 linux_prefix   = "ubuntu"
 linux_location = "northeurope"
-linux_size     = "Standard_A1_v2"
+linux_size     = "Standard_D2as_v5"
 
 admin_ssh_key_file = "~/.ssh/id_rsa.pub"
 
