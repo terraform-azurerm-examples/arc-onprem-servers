@@ -1,29 +1,10 @@
-terraform {
-  required_providers {
-    azurerm = {
-      source  = "hashicorp/azurerm"
-      version = "~> 2.51.0"
-    }
-  }
-}
-
-provider "azurerm" {
-  features {}
-
-  tenant_id       = var.tenant_id
-  subscription_id = var.subscription_id
-}
-
-provider "azuread" {}
-provider "random" {}
-provider "template" {}
-provider "http" {}
-
-# data "azurerm_subscription" "current" {}
-# data "azurerm_client_config" "current" {}
-
 data "http" "source_address" {
-  url = "https://ipinfo.io/ip"
+  // url = "https://ipinfo.io/ip" // Blocked on corpnet!
+  url = "https://myexternalip.com/raw"
+
+  request_headers = {
+    Accept = "application/json"
+  }
 }
 
 locals {
@@ -73,6 +54,8 @@ locals {
         linux   = "10.0.2.0/24"
       }
     }
+
+
   }
 
   windows_admin_password = var.windows_admin_password == null ? format("%s!", title(random_pet.onprem.id)) : var.windows_admin_password
@@ -98,7 +81,7 @@ locals {
   }
 
   # Use source_address_prefices if set, if not just use current public IP
-  source_address_prefixes = coalescelist(var.source_address_prefixes, [data.http.source_address.body])
+  source_address_prefixes = coalescelist(var.source_address_prefixes, [data.http.source_address.response_body])
 
   # Set a boolean for the connect if the arc object has been set
   # azcmagent_connect = var.arc == null ? false : true
@@ -118,6 +101,7 @@ resource "azurerm_resource_group" "onprem" {
   }
 }
 
+
 resource "azurerm_ssh_public_key" "onprem" {
   name                = "${local.name}-ssh-public-key"
   resource_group_name = upper(azurerm_resource_group.onprem.name)
@@ -131,6 +115,8 @@ resource "random_pet" "onprem" {
     resource_group_id = azurerm_resource_group.onprem.id
   }
 }
+
+
 
 // Networking
 
@@ -158,6 +144,18 @@ resource "azurerm_network_security_group" "linux" {
     access                                     = "Allow"
     protocol                                   = "Tcp"
     source_address_prefixes                    = local.source_address_prefixes
+    source_port_range                          = "*"
+    destination_application_security_group_ids = [azurerm_application_security_group.linux.id]
+    destination_port_range                     = "22"
+  }
+
+  security_rule {
+    name                                       = "CloudShell"
+    priority                                   = 1001
+    direction                                  = "Inbound"
+    access                                     = "Allow"
+    protocol                                   = "Tcp"
+    source_address_prefix                      = "AzureCloud"
     source_port_range                          = "*"
     destination_application_security_group_ids = [azurerm_application_security_group.linux.id]
     destination_port_range                     = "22"
@@ -326,7 +324,7 @@ resource "azurerm_bastion_host" "bastion" {
 
 module "linux_vms" {
   // source              = "../terraform-azurerm-arc-onprem-linux-vm"
-  source              = "github.com/terraform-azurerm-modules/terraform-azurerm-arc-onprem-linux-vm?ref=v1.0"
+  source              = "github.com/terraform-azurerm-modules/terraform-azurerm-arc-onprem-linux-vm?ref=v1.3"
   resource_group_name = azurerm_resource_group.onprem.name
   location            = local.linux_location
   tags                = var.tags
@@ -348,7 +346,7 @@ module "linux_vms" {
 
 module "windows_vms" {
   // source              = "../terraform-azurerm-arc-onprem-windows-vm"
-  source              = "github.com/terraform-azurerm-modules/terraform-azurerm-arc-onprem-windows-vm?ref=v1.2"
+  source              = "github.com/terraform-azurerm-modules/terraform-azurerm-arc-onprem-windows-vm?ref=v1.3"
   resource_group_name = azurerm_resource_group.onprem.name
   location            = local.windows_location
   tags                = var.tags

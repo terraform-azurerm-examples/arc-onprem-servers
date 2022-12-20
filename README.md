@@ -33,6 +33,7 @@ Consider these servers to be on prem servers for Azure Arc onboarding practice. 
 
 ## Prepare
 
+1. Create a new SSH keypair
 1. Login
 
     Login to Azure and check you are in the correct subscription context.

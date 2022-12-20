@@ -153,3 +153,27 @@ variable "subscription_id" {
   type    = string
   default = null
 }
+
+//========================================
+
+#// Variables for Azure Arc for Management & Governance partner hacks
+
+variable "hackteam" {
+  type    = string
+  default = null
+}
+
+variable "hackteam_tenant_id" {
+  type    = string
+  default = null
+}
+
+variable "hackteam_subscription_id" {
+  type    = string
+  default = null
+}
+
+variable "hackteam_resource_group_name" {
+  type    = string
+  default = "onprem_ssh_keys"
+}
