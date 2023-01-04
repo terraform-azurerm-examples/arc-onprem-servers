@@ -121,52 +121,62 @@ resource "azurerm_key_vault_secret" "hackteam" {
 }
 
 output "wiki" {
-  value = var.hackteam == null ? null : <<-WIKI
-  # Azure Arc for Management & Governance partner hack
+  value = var.hackteam == null ? null : <<WIKI
+# Azure Arc for Management & Governance partner hack
 
-  ## Admin Username
+## Admin Username
 
-    onpremadmin
+`onpremadmin`
 
-  ## Windows Admin Password
+## Windows Admin Password
 
-    ${local.windows_admin_password}
+`${local.windows_admin_password}`
 
-  ## Windows Servers
+## Windows Servers
 
-  %{for name in local.windows_vm_names~}
-  ${module.windows_vms[name].fqdn}
-  %{endfor~}
+```text
+%{for name in local.windows_vm_names~}
+${module.windows_vms[name].fqdn}
+%{endfor~}
+```
 
-  ## Linux Servers
+## Linux Servers
 
-  %{for name in local.linux_vm_names~}
-  ${module.linux_vms[name].ssh_command} -i ~/.ssh/${var.hackteam}
-  %{endfor~}
+```text
+%{for name in local.linux_vm_names~}
+${module.linux_vms[name].ssh_command} -i ~/.ssh/${var.hackteam}
+%{endfor~}
+```
 
-  ## SSH Keys (Bash)
+## SSH Keys (Bash)
 
-  ```bash
-  ssh-keygen -f ~/.ssh/${var.hackteam} -N ''
-  az sshkey show --subscription ${local.hackteam_subscription_id} --resource-group ${azurerm_resource_group.hackteam[var.hackteam].name} --name ${var.hackteam}-onprem-ssh-public-key --query publicKey --output tsv > ~/.ssh/${var.hackteam}.pub
-  vault=$(az keyvault list --resource-group ${azurerm_resource_group.hackteam[var.hackteam].name} --query [0].name --output tsv)
-  az keyvault secret show --vault-name ${azurerm_key_vault.hackteam[var.hackteam].name} --name ${var.hackteam}-onprem-ssh-private-key --query value --output tsv | baseyes
-  64 -d > ~/.ssh/${var.hackteam}
-  ```
+```bash
+[[ ! -s ~/.ssh/${var.hackteam} ]] && ssh-keygen -f ~/.ssh/${var.hackteam} -N ''
+az sshkey show --name ${var.hackteam}-onprem-ssh-public-key \
+  --subscription ${local.hackteam_subscription_id} \
+  --resource-group ${azurerm_resource_group.hackteam[var.hackteam].name} \
+  --query publicKey --output tsv > ~/.ssh/${var.hackteam}.pub
+vault=$(az keyvault list --resource-group ${azurerm_resource_group.hackteam[var.hackteam].name} --query [0].name --output tsv)
+az keyvault secret show --name ${var.hackteam}-onprem-ssh-private-key \
+  --vault-name ${azurerm_key_vault.hackteam[var.hackteam].name} \
+  --query value --output tsv | base64 -d > ~/.ssh/${var.hackteam}
+```
 
-  ## SSH Keys (PowerShell)
+## SSH Keys (PowerShell)
 
-  ```powershell
-  if (!(test-path -path ~/.ssh)) {new-item -path ~/.ssh -itemtype directory}
-  ssh-keygen -f ".ssh\${var.hackteam}" -N " "
-
-  $PSDefaultParameterValues['Out-File:Encoding'] = 'UTF8'
-  az sshkey show --subscription ${local.hackteam_subscription_id} --resource-group ${azurerm_resource_group.hackteam[var.hackteam].name} --name ${var.hackteam}-onprem-ssh-public-key --query publicKey --output tsv > ~/.ssh/${var.hackteam}.pub
-  $vault = $(az keyvault list --resource-group ${azurerm_resource_group.hackteam[var.hackteam].name} --query [0].name --output tsv)
-  $key = $(az keyvault secret show --vault-name ${azurerm_key_vault.hackteam[var.hackteam].name} --name ${var.hackteam}-onprem-ssh-private-key --query value --output tsv)
-  [Text.Encoding]::Utf8.GetString([Convert]::FromBase64String($key)) > ~/.ssh/${var.hackteam}
-
-  ```
-
-  WIKI
+```powershell
+if (!(test-path -path ~/.ssh)) {new-item -path ~/.ssh -itemtype directory}
+ssh-keygen -f ".ssh\${var.hackteam}" -N " "
+$PSDefaultParameterValues['Out-File:Encoding'] = 'UTF8'
+az sshkey show --name ${var.hackteam}-onprem-ssh-public-key `
+  --subscription ${local.hackteam_subscription_id} `
+  --resource-group ${azurerm_resource_group.hackteam[var.hackteam].name} `
+  --query publicKey --output tsv > ~/.ssh/${var.hackteam}.pub
+$vault = $(az keyvault list --resource-group ${azurerm_resource_group.hackteam[var.hackteam].name} --query [0].name --output tsv)
+$key = $(az keyvault secret show --name ${var.hackteam}-onprem-ssh-private-key `
+  --vault-name ${azurerm_key_vault.hackteam[var.hackteam].name} `
+  --query value --output tsv)
+[Text.Encoding]::Utf8.GetString([Convert]::FromBase64String($key)) > ~/.ssh/${var.hackteam}
+```
+WIKI
 }
