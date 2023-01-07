@@ -34,5 +34,6 @@ provider "azuread" {
 }
 
 provider "random" {}
+provider "local" {}
 provider "template" {}
 provider "http" {}

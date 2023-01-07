@@ -1,6 +1,6 @@
 .terraform/*
 .terraform.lock.hcl
 .terraform.tfstate.lock.info
-azcmagent.auto.tfvars
-hackteam.auto.tfvars
+*.auto.tfvars
 terraform.tfstate*
+wiki.md

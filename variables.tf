@@ -177,3 +177,21 @@ variable "hackteam_resource_group_name" {
   type    = string
   default = "onprem_ssh_keys"
 }
+
+variable "lighthouse_tenant_id" {
+  type    = string
+  default = null
+}
+
+variable "lighthouse" {
+  description = "Object for Azure Lighthouse. Will project the resources for multi-tenanted resource management."
+  type = object({
+    name                   = string
+    description            = string
+    managing_tenant_id     = string
+    principal_id           = string
+    principal_display_name = string
+  })
+
+  default = null
+}

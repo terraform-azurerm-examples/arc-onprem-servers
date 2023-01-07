@@ -120,8 +120,11 @@ resource "azurerm_key_vault_secret" "hackteam" {
   key_vault_id = azurerm_key_vault.hackteam[var.hackteam].id
 }
 
-output "wiki" {
-  value = var.hackteam == null ? null : <<WIKI
+resource "local_file" "wiki" {
+  for_each        = local.hackteam
+  filename        = "${path.module}/wiki.md"
+  file_permission = "0664"
+  content         = <<WIKI
 # Azure Arc for Management & Governance partner hack
 
 ## Admin Username

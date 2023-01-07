@@ -1,6 +1,8 @@
 output "linux_ssh_commands" {
-  value = { for name in local.linux_vm_names :
-  name => module.linux_vms[name].ssh_command }
+  value = {
+    for name in local.linux_vm_names :
+    name => "${module.linux_vms[name].ssh_command} -i ${trimsuffix(var.admin_ssh_key_file, ".pub")}"
+  }
 }
 
 // output "linux_fqdns" {
@@ -13,7 +15,7 @@ output "windows_fqdns" {
   name => module.windows_vms[name].fqdn }
 }
 
-output "admin_username" {
+output "windows_admin_id" {
   value = var.admin_username
 }
 
