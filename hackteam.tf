@@ -9,26 +9,16 @@ locals {
   hackteam_subscription_id = var.hackteam_subscription_id != null ? var.hackteam_subscription_id : var.subscription_id
 }
 
-resource "azuread_group" "proctors" {
-  provider = azuread.hackteam
-  for_each = local.hackteam
-
-  display_name     = "Proctors"
-  mail_enabled     = false
-  security_enabled = true
-
-  owners = [
-    data.azuread_client_config.current[var.hackteam].object_id
-  ]
-
-  members = [
-    data.azuread_client_config.current[var.hackteam].object_id
-  ]
-}
-
 resource "azuread_group" "hackteam" {
   provider = azuread.hackteam
   for_each = local.hackteam
+
+  lifecycle {
+    ignore_changes = [
+      owners,
+      members,
+    ]
+  }
 
   display_name     = "Hack Team"
   mail_enabled     = false
@@ -39,7 +29,7 @@ resource "azuread_group" "hackteam" {
   ]
 
   members = [
-    resource.azuread_group.proctors[var.hackteam].object_id
+    data.azuread_client_config.current[var.hackteam].object_id
   ]
 }
 
@@ -53,6 +43,12 @@ resource "azurerm_resource_group" "hackteam" {
   lifecycle {
     ignore_changes = [tags, ]
   }
+}
+
+resource "azurerm_role_assignment" "hackteam" {
+  scope                = "/subscriptions/${local.hackteam_subscription_id}"
+  role_definition_name = "Owner"
+  principal_id         = azuread_group.hackteam[var.hackteam].object_id
 }
 
 resource "azurerm_ssh_public_key" "hackteam" {
@@ -94,19 +90,10 @@ resource "azurerm_key_vault" "hackteam" {
 
   access_policy {
     tenant_id = local.hackteam_tenant_id
-    object_id = resource.azuread_group.proctors[var.hackteam].object_id
-
-    secret_permissions = [
-      "Backup", "Delete", "Get", "List", "Purge", "Recover", "Restore", "Set"
-    ]
-  }
-
-  access_policy {
-    tenant_id = local.hackteam_tenant_id
     object_id = resource.azuread_group.hackteam[var.hackteam].object_id
 
     secret_permissions = [
-      "Get", "List"
+      "Backup", "Delete", "Get", "List", "Purge", "Recover", "Restore", "Set"
     ]
   }
 }
