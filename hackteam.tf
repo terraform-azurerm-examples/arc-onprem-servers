@@ -46,6 +46,8 @@ resource "azurerm_resource_group" "hackteam" {
 }
 
 resource "azurerm_role_assignment" "hackteam" {
+  provider             = azurerm.hackteam
+  for_each             = local.hackteam
   scope                = "/subscriptions/${local.hackteam_subscription_id}"
   role_definition_name = "Owner"
   principal_id         = azuread_group.hackteam[var.hackteam].object_id
