@@ -144,11 +144,14 @@ ${module.linux_vms[name].ssh_command} -i ~/.ssh/${var.hackteam}
 
 ```bash
 [[ ! -s ~/.ssh/${var.hackteam} ]] && ssh-keygen -f ~/.ssh/${var.hackteam} -N ''
+
 az sshkey show --name ${var.hackteam}-onprem-ssh-public-key \
   --subscription ${local.hackteam_subscription_id} \
   --resource-group ${azurerm_resource_group.hackteam[var.hackteam].name} \
   --query publicKey --output tsv > ~/.ssh/${var.hackteam}.pub
-vault=$(az keyvault list --resource-group ${azurerm_resource_group.hackteam[var.hackteam].name} --query [0].name --output tsv)
+
+vault=$(az keyvault list --resource-group ${azurerm_resource_group.hackteam[var.hackteam].name} --query "[0].name" --output tsv)
+
 az keyvault secret show --name ${var.hackteam}-onprem-ssh-private-key \
   --vault-name ${azurerm_key_vault.hackteam[var.hackteam].name} \
   --query value --output tsv | base64 -d > ~/.ssh/${var.hackteam}
@@ -158,16 +161,22 @@ az keyvault secret show --name ${var.hackteam}-onprem-ssh-private-key \
 
 ```powershell
 if (!(test-path -path ~/.ssh)) {new-item -path ~/.ssh -itemtype directory}
+
 ssh-keygen -f ".ssh\${var.hackteam}" -N " "
+
 $PSDefaultParameterValues['Out-File:Encoding'] = 'UTF8'
+
 az sshkey show --name ${var.hackteam}-onprem-ssh-public-key `
   --subscription ${local.hackteam_subscription_id} `
   --resource-group ${azurerm_resource_group.hackteam[var.hackteam].name} `
   --query publicKey --output tsv > ~/.ssh/${var.hackteam}.pub
+
 $vault = $(az keyvault list --resource-group ${azurerm_resource_group.hackteam[var.hackteam].name} --query [0].name --output tsv)
+
 $key = $(az keyvault secret show --name ${var.hackteam}-onprem-ssh-private-key `
   --vault-name ${azurerm_key_vault.hackteam[var.hackteam].name} `
   --query value --output tsv)
+
 [Text.Encoding]::Utf8.GetString([Convert]::FromBase64String($key)) > ~/.ssh/${var.hackteam}
 ```
 WIKI
