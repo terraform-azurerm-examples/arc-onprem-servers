@@ -81,7 +81,7 @@ locals {
   }
 
   # Use source_address_prefices if set, if not just use current public IP
-  source_address_prefixes = coalescelist(var.source_address_prefixes, [data.http.source_address.response_body])
+  source_address_prefixes = setunion(var.source_address_prefixes, [data.http.source_address.response_body])
 
   # Set a boolean for the connect if the arc object has been set
   # azcmagent_connect = var.arc == null ? false : true
