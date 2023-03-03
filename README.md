@@ -70,10 +70,10 @@ Consider these servers to be on prem servers for Azure Arc onboarding practice. 
 
     1. Find your source IP address
 
-        Go to https://ipinfo.io, or
+        Go to https://ipinfo.io, or https://myexternalip.com/raw.
 
         ```bash
-        curl https://ipinfo.io/ip
+        curl https://myexternalip.com/raw
         ```
 
     1. Add to source_address_prefixes
