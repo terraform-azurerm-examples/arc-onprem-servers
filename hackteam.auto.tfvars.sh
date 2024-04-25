@@ -38,7 +38,7 @@ do
   [[ -z "$windows_admin_password" ]] && "Empty windows_admin_password."
   [[ -n "$etc" ]] && "More fields in ~/hack/partner_ids than expected."
   echo "$partner"
-  [[ ! -d ~/hack/$partner ]] && error "No~/hack/$partner directory."
+  [[ ! -d ~/hack/$partner ]] && error "No ~/hack/$partner directory."
 
   cat > ~/hack/$partner/hackteam.auto.tfvars <<EOF
 tenant_id           = "$resources_tenant_id"

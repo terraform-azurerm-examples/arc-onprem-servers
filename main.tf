@@ -1,6 +1,6 @@
 data "http" "source_address" {
-  // url = "https://ipinfo.io/ip" // Blocked on corpnet!
-  url = "https://myexternalip.com/raw"
+  url = "https://ipinfo.io/ip"
+  // url = "https://myexternalip.com/raw"
 
   request_headers = {
     Accept = "application/json"

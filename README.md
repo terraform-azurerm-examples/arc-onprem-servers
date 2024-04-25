@@ -73,7 +73,7 @@ Consider these servers to be on prem servers for Azure Arc onboarding practice. 
         Go to https://ipinfo.io, or https://myexternalip.com/raw.
 
         ```bash
-        curl https://myexternalip.com/raw
+        curl https://ipinfo.io/ip
         ```
 
     1. Add to source_address_prefixes
