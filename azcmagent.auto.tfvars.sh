@@ -1,4 +1,15 @@
 #!/bin/bash
+# Script intended for a single environment.
+# (Use the hackteam.auto.tfvars.sh script for multiple environments.)
+#
+# Can set resource group name in the first argument.
+# Can set subscription id in the second argument.
+# Can set location in the third argument.
+#
+# Assumes that the user is in the right context and has the right permissions.
+# The script creates a service principal and role assignment for the Azure Connected Machine Onboarding role.
+# The script creates the azcmagent.auto.tfvars file for the Azure Arc Connected Machine agent installation.
+# The script creates a resource group for the Arc-enabled Servers, i.e. connected machines.
 
 error()
 {
@@ -18,26 +29,21 @@ info()
 
 ## Variables
 
-# Resource group for the Arc-enabled Servers, i.e. connected machines
-subscription_id=$(az account show --query id --output tsv)
-resource_group_name=arc_pilot
-location=uksouth
+resource_group_name=${1:-arc_pilot}
+[[ -n "$2" ]] && subscription_id=$2 || subscription_id=$(az account show --query id --output tsv)
+[[ -n "$3" ]] && location=$3 || location=uksouth
 
-## Create resource group
-
-info "Creating resource group $resource_group_name"
-az group create --name $resource_group_name --location $location --output jsonc || error "Failed to create $resource_group_name"
-resource_group_id=$(az group show --name $resource_group_name --query id --output tsv)
+info "- Creating resource group $resource_group_name"
+az group create --name $resource_group_name --location $location --subscription $subscription_id --output none || error "Failed to create $resource_group_name"
+resource_group_id=$(az group show --name $resource_group_name --subscription $subscription_id --query id --output tsv)
 
 # Create the service principal and role assignment
 
-# name=arc_pilot_$(sha1sum <<< $resource_group_id | cut -c1-8)
-name=arc_pilot
-info "Creating service principal $name"
+name=$resource_group_name
+info "- Creating service principal $name"
 json=$(az ad sp create-for-rbac --name $name --scope $resource_group_id --role "Azure Connected Machine Onboarding" --only-show-errors)
-jq -r <<< $json
 
-# Create the auto.*.tfvars file
+# Create the azcmagent.auto.tfvars file
 
 cat > azcmagent.auto.tfvars <<EOF
 azcmagent = {
@@ -59,14 +65,11 @@ arc = {
   subscription_id          = "$subscription_id"
   resource_group_name      = "$resource_group_name"
   location                 = "$location"
-
   tags = {
-    platform   = "VMware vSphere"
-    cluster    = "POC"
+    environment = "pilot"
   }
 }
 
 EOF
 
-info "Created azcmagent.auto.tfvars:"
-cat azcmagent.auto.tfvars
+info "- Created azcmagent.auto.tfvars variable file. Check before running Terraform."

@@ -56,6 +56,16 @@ Having connect = true for either OS type requires a defined arc object.
 
 ## Connecting to Azure Arc
 
+⚠️ Ensure the subscriptions have the Microsoft.HybridCompute provider registered.
+
+```bash
+az provider register --namespace Microsoft.HybridCompute --subscription subscription_id
+```
+
+```bash
+az provider show --namespace Microsoft.HybridCompute --subscription subscription_id --query registrationState
+```
+
 ### Manual onboarding
 
 There are a number of ways of connecting:
@@ -75,7 +85,7 @@ arc = {
     service_principal_secret = "password"
 
     subscription_id     = "subscriptionId"
-    resource_group_name = "arc_pilot"
+    resource_group_name = "arc"
     location            = "uksouth"
 
     tags = {
@@ -103,7 +113,7 @@ Note that if you set the arc object then azcmagent will be set to true automatic
 
 ### Automated onboarding
 
-An azcmagent.auto.tfvars.sh script is included that will
+An azcmagent.auto.tfvars.sh script is included that will automate steps for those
 
 1. Create a resource group
 1. Create a service principal

@@ -323,11 +323,13 @@ resource "azurerm_bastion_host" "bastion" {
 // Linux virtual machines
 
 module "linux_vms" {
-  // source              = "../terraform-azurerm-arc-onprem-linux-vm"
-  source              = "github.com/terraform-azurerm-modules/terraform-azurerm-arc-onprem-linux-vm?ref=v1.3"
+  // source           = "../../git/terraform-azurerm-arc-onprem-linux-vm"
+  source              = "github.com/terraform-azurerm-modules/terraform-azurerm-arc-onprem-linux-vm?ref=v1.4"
   resource_group_name = azurerm_resource_group.onprem.name
   location            = local.linux_location
   tags                = var.tags
+
+  depends_on = [ azurerm_subnet.linux, azurerm_application_security_group.linux ]
 
   for_each = toset(local.linux_vm_names)
 
@@ -345,11 +347,13 @@ module "linux_vms" {
 }
 
 module "windows_vms" {
-  // source              = "../terraform-azurerm-arc-onprem-windows-vm"
-  source              = "github.com/terraform-azurerm-modules/terraform-azurerm-arc-onprem-windows-vm?ref=v1.3"
+  // source              = "../../git/terraform-azurerm-arc-onprem-windows-vm"
+  source              = "github.com/terraform-azurerm-modules/terraform-azurerm-arc-onprem-windows-vm?ref=v1.4"
   resource_group_name = azurerm_resource_group.onprem.name
   location            = local.windows_location
   tags                = var.tags
+
+  depends_on = [ azurerm_subnet.windows, azurerm_application_security_group.windows ]
 
   for_each = toset(local.windows_vm_names)
 
