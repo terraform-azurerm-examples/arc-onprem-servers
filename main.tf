@@ -329,7 +329,7 @@ module "linux_vms" {
   location            = local.linux_location
   tags                = var.tags
 
-  depends_on = [ azurerm_subnet.linux, azurerm_application_security_group.linux ]
+  depends_on = [ azurerm_application_security_group.linux ]
 
   for_each = toset(local.linux_vm_names)
 
@@ -353,7 +353,7 @@ module "windows_vms" {
   location            = local.windows_location
   tags                = var.tags
 
-  depends_on = [ azurerm_subnet.windows, azurerm_application_security_group.windows ]
+  depends_on = [ azurerm_application_security_group.windows ]
 
   for_each = toset(local.windows_vm_names)
 
